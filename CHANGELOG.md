@@ -527,6 +527,15 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.12 (2026-09-28)
+
+### Performance Improvements
+
+- **cache**: Default SnapKV to batched near-tie-verified attention scoring
+  ([#551](https://github.com/rajveer43/VeloxQuant-MLX/pull/551),
+  [`be3ca1f`](https://github.com/rajveer43/VeloxQuant-MLX/commit/be3ca1ff3a5886bf427002b5b0badaaedbf6e484))
+
+
 ## v0.91.11 (2026-09-28)
 
 ### Bug Fixes
