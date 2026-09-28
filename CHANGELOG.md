@@ -527,6 +527,27 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.15 (2026-09-28)
+
+### Performance Improvements
+
+- **cache**: Batch AgeTiered's per-group requantization across B*H
+  ([#574](https://github.com/rajveer43/VeloxQuant-MLX/pull/574),
+  [`91d81eb`](https://github.com/rajveer43/VeloxQuant-MLX/commit/91d81ebc4ccc84bf975b28a48aca8012bd24850f))
+
+- **cache**: Batch Keyformer's per-head eviction dispatch across B*H
+  ([#575](https://github.com/rajveer43/VeloxQuant-MLX/pull/575),
+  [`0ec3280`](https://github.com/rajveer43/VeloxQuant-MLX/commit/0ec32808184a70bca1838ffdf044c085a3e6e279))
+
+- **cache**: Batch KVzip's per-head eviction dispatch across B*H
+  ([#577](https://github.com/rajveer43/VeloxQuant-MLX/pull/577),
+  [`4c5dc59`](https://github.com/rajveer43/VeloxQuant-MLX/commit/4c5dc5910573c99e1ebba9e2e05e3fae175484b9))
+
+- **cache**: Batch SqueezeAttention's per-head eviction dispatch across B*H
+  ([#576](https://github.com/rajveer43/VeloxQuant-MLX/pull/576),
+  [`0d3d5d3`](https://github.com/rajveer43/VeloxQuant-MLX/commit/0d3d5d3697b9fb85edd01eadc4d0d2218fd23b76))
+
+
 ## v0.91.14 (2026-09-28)
 
 ### Performance Improvements
