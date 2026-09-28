@@ -527,6 +527,19 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.13 (2026-09-28)
+
+### Performance Improvements
+
+- **cache**: Batch CacheGen's per-head quant/dequant/entropy accounting across B*H
+  ([#571](https://github.com/rajveer43/VeloxQuant-MLX/pull/571),
+  [`eeae952`](https://github.com/rajveer43/VeloxQuant-MLX/commit/eeae952ad58a8681d535456b839ee375550e161e))
+
+- **cache**: Batch Kitty's per-head channel ranking + mixed-precision quant across B*H
+  ([#572](https://github.com/rajveer43/VeloxQuant-MLX/pull/572),
+  [`6691860`](https://github.com/rajveer43/VeloxQuant-MLX/commit/6691860094648e3c0b28beb36e4d7276639ac121))
+
+
 ## v0.91.12 (2026-09-28)
 
 ### Performance Improvements
