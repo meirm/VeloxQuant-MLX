@@ -527,6 +527,29 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.11 (2026-09-28)
+
+### Bug Fixes
+
+- **netlify**: Stop building preview on every PR regardless of path
+  ([#550](https://github.com/rajveer43/VeloxQuant-MLX/pull/550),
+  [`ba2acd3`](https://github.com/rajveer43/VeloxQuant-MLX/commit/ba2acd34114235827cc81f7c4bed7b189b6e079c))
+
+### Documentation
+
+- Clarify citation is appreciated (not license-required) + authorship policy
+  ([#547](https://github.com/rajveer43/VeloxQuant-MLX/pull/547),
+  [`480b319`](https://github.com/rajveer43/VeloxQuant-MLX/commit/480b3195afcfc68088d1d3b0eb0f2d3f2228af18))
+
+- Research-friendly citation clarity + contributor authorship policy
+  ([#547](https://github.com/rajveer43/VeloxQuant-MLX/pull/547),
+  [`480b319`](https://github.com/rajveer43/VeloxQuant-MLX/commit/480b3195afcfc68088d1d3b0eb0f2d3f2228af18))
+
+- Tighten MIT attribution wording per review, align GOVERNANCE/CONTRIBUTORS
+  ([#547](https://github.com/rajveer43/VeloxQuant-MLX/pull/547),
+  [`480b319`](https://github.com/rajveer43/VeloxQuant-MLX/commit/480b3195afcfc68088d1d3b0eb0f2d3f2228af18))
+
+
 ## v0.91.10 (2026-09-28)
 
 ### Documentation
