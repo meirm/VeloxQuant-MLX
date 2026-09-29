@@ -527,6 +527,23 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.16 (2026-09-29)
+
+### Performance Improvements
+
+- **cache**: Batch MorphKV's per-head dispatch + recent-window loop across B*H
+  ([#578](https://github.com/rajveer43/VeloxQuant-MLX/pull/578),
+  [`56477f8`](https://github.com/rajveer43/VeloxQuant-MLX/commit/56477f810eac5e90c3e250b309db1d77d60e6ae8))
+
+- **cache**: Batch PALU's per-head group projection/reconstruction across heads
+  ([#579](https://github.com/rajveer43/VeloxQuant-MLX/pull/579),
+  [`6bfb4ad`](https://github.com/rajveer43/VeloxQuant-MLX/commit/6bfb4ada80a4753fda3a3dc0a8c03f7aef96e7f1))
+
+- **cache**: Batch SVDq's per-head project/quantize/reconstruct across heads
+  ([#580](https://github.com/rajveer43/VeloxQuant-MLX/pull/580),
+  [`c973e68`](https://github.com/rajveer43/VeloxQuant-MLX/commit/c973e68f5b9ac8e8c09f5ef909442599ae94bf3a))
+
+
 ## v0.91.15 (2026-09-28)
 
 ### Performance Improvements
