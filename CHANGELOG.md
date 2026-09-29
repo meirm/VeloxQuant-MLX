@@ -527,6 +527,43 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.18 (2026-09-29)
+
+### Performance Improvements
+
+- **cache**: Batch AnchorKV's per-head prefill compression across B*H (#567)
+  ([#585](https://github.com/rajveer43/VeloxQuant-MLX/pull/585),
+  [`60eb5d4`](https://github.com/rajveer43/VeloxQuant-MLX/commit/60eb5d4eb658083d4cae0358062d498f731c1f77))
+
+- **cache**: Batch ChunkKV's per-head eviction/reuse dispatch across B*H
+  ([#582](https://github.com/rajveer43/VeloxQuant-MLX/pull/582),
+  [`d157899`](https://github.com/rajveer43/VeloxQuant-MLX/commit/d157899f9a47e482924dbc5a7c3774ebcb352a5a))
+
+- **cache**: Batch CurDKV's per-head leverage-score eviction dispatch across B*H
+  ([#584](https://github.com/rajveer43/VeloxQuant-MLX/pull/584),
+  [`72912d5`](https://github.com/rajveer43/VeloxQuant-MLX/commit/72912d5e9d80bdba13efd04e1cc4039956194a3b))
+
+- **cache**: Batch CurDKV's per-head leverage-score eviction dispatch across B*H (#565)
+  ([#583](https://github.com/rajveer43/VeloxQuant-MLX/pull/583),
+  [`051f743`](https://github.com/rajveer43/VeloxQuant-MLX/commit/051f743f838e1e7d1f5efe61c857ad816dfcbee8))
+
+- **cache**: Batch GEAR's Pass 3 low-rank add + sparse-outlier scatter across B*H (#570)
+  ([#588](https://github.com/rajveer43/VeloxQuant-MLX/pull/588),
+  [`4454421`](https://github.com/rajveer43/VeloxQuant-MLX/commit/445442199452a63f449a7fa6d6b0958590f81798))
+
+- **cache**: Batch MiniCache's per-head SLERP merge/reconstruct across B*H
+  ([#584](https://github.com/rajveer43/VeloxQuant-MLX/pull/584),
+  [`72912d5`](https://github.com/rajveer43/VeloxQuant-MLX/commit/72912d5e9d80bdba13efd04e1cc4039956194a3b))
+
+- **cache**: Batch NestedKV's per-head prefill scoring + decode append across B*H (#568)
+  ([#586](https://github.com/rajveer43/VeloxQuant-MLX/pull/586),
+  [`e7fdd30`](https://github.com/rajveer43/VeloxQuant-MLX/commit/e7fdd30add4e09e49cf3e171bea025d25ed5065c))
+
+- **cache**: Batch SVDq's and KVTC's per-head SVD basis fit across heads (#569)
+  ([#587](https://github.com/rajveer43/VeloxQuant-MLX/pull/587),
+  [`07bad25`](https://github.com/rajveer43/VeloxQuant-MLX/commit/07bad25177686876a0f094eb3dcdd5291a6b455b))
+
+
 ## v0.91.17 (2026-09-29)
 
 ### Performance Improvements
