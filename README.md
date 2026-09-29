@@ -309,7 +309,9 @@ Metal parity tests that need Apple Silicon, gates each release.
 
 ## Documentation & blog posts
 
-Full docs, including per-method pages, guides, and API reference: **https://veloxquant.dev/**
+Full docs, including per-method pages and guides: **https://veloxquant.dev/**
+
+Generated API reference (classes, functions, docstrings): **https://veloxquant-mlx.readthedocs.io/en/latest/quickstart.html**
 
 Deep-dive writeups live in [`blogs/`](blogs/) and are published on the docs site:
 [overview](https://veloxquant.dev/docs/blog/overview) ·
