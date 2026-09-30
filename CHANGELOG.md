@@ -527,6 +527,38 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.19 (2026-09-30)
+
+### Bug Fixes
+
+- **cache**: Skip GEAR's low-rank correction when it can't pay for itself at decode
+  ([#591](https://github.com/rajveer43/VeloxQuant-MLX/pull/591),
+  [`e6bf0c8`](https://github.com/rajveer43/VeloxQuant-MLX/commit/e6bf0c8aa0c7e90991640f0d716fadda54a83fbd))
+
+### Documentation
+
+- Add Sphinx API reference for Read the Docs
+  ([#589](https://github.com/rajveer43/VeloxQuant-MLX/pull/589),
+  [`bef4612`](https://github.com/rajveer43/VeloxQuant-MLX/commit/bef461276071667268277f08a53f5d97531cd470))
+
+- Drop comment on the docs optional-dependency group
+  ([#589](https://github.com/rajveer43/VeloxQuant-MLX/pull/589),
+  [`bef4612`](https://github.com/rajveer43/VeloxQuant-MLX/commit/bef461276071667268277f08a53f5d97531cd470))
+
+- Link the Read the Docs API reference from README
+  ([`afedf3d`](https://github.com/rajveer43/VeloxQuant-MLX/commit/afedf3dd18f2d0594413f880b5f02e305bcded2d))
+
+- Simplify wording of pyproject.toml comments
+  ([#589](https://github.com/rajveer43/VeloxQuant-MLX/pull/589),
+  [`bef4612`](https://github.com/rajveer43/VeloxQuant-MLX/commit/bef461276071667268277f08a53f5d97531cd470))
+
+### Performance Improvements
+
+- **cache**: Skip GEAR's SVD dispatch when the low-rank correction can't be profitable
+  ([#591](https://github.com/rajveer43/VeloxQuant-MLX/pull/591),
+  [`e6bf0c8`](https://github.com/rajveer43/VeloxQuant-MLX/commit/e6bf0c8aa0c7e90991640f0d716fadda54a83fbd))
+
+
 ## v0.91.18 (2026-09-29)
 
 ### Performance Improvements
