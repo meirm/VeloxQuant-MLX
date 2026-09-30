@@ -527,6 +527,15 @@ window size via `adakv_obs_window` (default 32).
 
 <!-- version list -->
 
+## v0.91.24 (2026-09-30)
+
+### Bug Fixes
+
+- **cache**: Defer prefill eviction in eight caches (#610)
+  ([#665](https://github.com/rajveer43/VeloxQuant-MLX/pull/665),
+  [`c059d6e`](https://github.com/rajveer43/VeloxQuant-MLX/commit/c059d6e8f22a6a8cad08b33d09263cef8fa900ec))
+
+
 ## v0.91.23 (2026-09-30)
 
 ### Bug Fixes
