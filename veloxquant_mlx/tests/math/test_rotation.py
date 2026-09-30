@@ -1,4 +1,5 @@
-"""Tests for is_hadamard_compatible, including the bare-m regression for #67."""
+"""Tests for is_hadamard_compatible, including the bare-m regression for #67 and the
+non-symmetric Paley regression for #608."""
 
 from __future__ import annotations
 
@@ -91,19 +92,30 @@ class TestBareMValuesAreRejected:
 
 
 class TestDoubledMValuesAreAccepted:
-    """d = m * 2^k for k >= 1 must remain compatible -- these work fine."""
+    """d = 12 * 2^k for k >= 1 must remain compatible -- these work fine and
+    the transform is symmetric so the round-trip is exact."""
 
-    @pytest.mark.parametrize("d", [24, 48, 96, 40, 80, 56, 112])
-    def test_doubled_m_is_compatible(self, d: int) -> None:
+    @pytest.mark.parametrize("d", [24, 48, 96])
+    def test_doubled_12_is_compatible(self, d: int) -> None:
         assert is_hadamard_compatible(d)
 
-    @pytest.mark.parametrize("d", [24, 40, 56])
-    def test_doubled_m_actually_works_in_mlx(self, d: int) -> None:
+    @pytest.mark.parametrize("d", [24])
+    def test_doubled_12_actually_works_in_mlx(self, d: int) -> None:
         import mlx.core as mx
 
         x = mx.array(np.random.randn(d).astype(np.float32))
         y = mx.hadamard_transform(x)
         mx.eval(y)
+
+
+class TestPaleyMValuesAreRejected:
+    """Regression for #608: d = 20 * 2^k and 28 * 2^k (40, 56, 80, 112, …)
+    use a non-symmetric Paley Hadamard so H(H(x)) != x; they are excluded from
+    is_hadamard_compatible so HadamardPreconditioner falls back to QR."""
+
+    @pytest.mark.parametrize("d", [40, 56, 80, 112, 160, 224])
+    def test_paley_multiples_not_compatible(self, d: int) -> None:
+        assert not is_hadamard_compatible(d)
 
 
 class TestPowersOfTwoAreAccepted:
@@ -118,6 +130,24 @@ class TestPowersOfTwoAreAccepted:
         x = mx.array(np.random.randn(d).astype(np.float32))
         y = mx.hadamard_transform(x)
         mx.eval(y)
+
+
+class TestHadamardRoundTrip:
+    """Every size accepted by is_hadamard_compatible must satisfy H(H(x)) == x
+    (i.e. the transform is its own inverse).  Regression for #608."""
+
+    @pytest.mark.parametrize("d", [1, 2, 4, 8, 16, 32, 64, 128, 24, 48, 96])
+    def test_hadamard_round_trip(self, d: int) -> None:
+        import mlx.core as mx
+
+        assert is_hadamard_compatible(d), f"d={d} not marked compatible"
+        x = mx.array(np.random.randn(4, d).astype(np.float32))
+        reconstructed = mx.hadamard_transform(mx.hadamard_transform(x))
+        mx.eval(reconstructed)
+        np.testing.assert_allclose(
+            np.array(reconstructed), np.array(x), atol=1e-5,
+            err_msg=f"Hadamard round-trip failed for d={d}",
+        )
 
 
 class TestIncompatibleValues:

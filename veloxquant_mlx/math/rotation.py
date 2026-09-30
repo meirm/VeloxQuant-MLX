@@ -15,28 +15,31 @@ from __future__ import annotations
 
 import numpy as np
 
-# mx.hadamard_transform requires d = m * 2^k where m is in this set
-_HADAMARD_VALID_M = {1, 12, 20, 28}
+# mx.hadamard_transform requires d = m * 2^k where m is in this set.
+# m=20 and m=28 use a Paley construction that is orthogonal but NOT symmetric,
+# so H(H(x)) != x; their multiples (40, 56, 80, 112, ...) have the same property
+# and silently corrupt the round-trip in apply_inverse. Drop them so those sizes
+# fall back to the QR rotation. See issue #608.
+_HADAMARD_VALID_M = {1, 12}
 
 
 def is_hadamard_compatible(d: int) -> bool:
-    """Return True if d is supported by mx.hadamard_transform.
+    """Return True if d is supported by mx.hadamard_transform AND self-inverse.
 
-    MLX requires d = m * 2^k where m in {1, 12, 20, 28} and k >= 0 -- except
-    for the bare non-trivial m values (d == 12, 20, 28 exactly, i.e. k=0),
-    which this gate rejects. On MLX <= 0.32.0 they crash
-    mx.hadamard_transform during Metal shader compilation rather than raising
-    a catchable error (#67). MLX 0.32.1 fixed that kernel and returns a
-    correct orthonormal Hadamard for those sizes, but this package supports
-    mlx>=0.18, so the gate stays conservative: green-lighting a d that crashes
-    on a supported older MLX is worse than declining a rotation that would
-    have worked on a newer one. If the floor is ever raised to >=0.32.1 this
-    can accept bare m -- see test_bare_m_transform_is_orthonormal_when_supported,
-    which checks the correctness precondition for doing so.
+    MLX supports d = m * 2^k where m in {1, 12, 20, 28} and k >= 0.  This
+    gate only admits m in {1, 12}: the m=20 and m=28 Paley-construction
+    Hadamards are orthogonal but NOT symmetric, so H^T != H and H(H(x)) != x.
+    Passing those sizes to HadamardPreconditioner.apply_inverse applies H a
+    second time instead of H^T, corrupting the round-trip with relative error
+    ~1.7 (see issue #608).  The affected sizes (40, 56, 80, 112, 160, 224, …)
+    fall back to the QR rotation.
 
-    k=0 with m=1 (d=1) is unaffected and works fine, since it's just the
-    identity transform. All powers of 2 work (m=1, k>=0). Examples that do NOT
-    work: 576=9*64, 192=3*64.
+    Additionally, bare non-trivial m values (d == 12 exactly, i.e. k=0) are
+    rejected because MLX <= 0.32.0 crashes on them during Metal shader
+    compilation (#67).
+
+    k=0 with m=1 (d=1) is unaffected (identity transform).  All powers of 2
+    work (m=1, k>=0).  Examples that do NOT work: 576=9*64, 192=3*64.
     """
     if d < 1:
         return False

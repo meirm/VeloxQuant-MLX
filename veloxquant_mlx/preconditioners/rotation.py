@@ -30,7 +30,8 @@ class HadamardPreconditioner(Preconditioner):
     Stores only D (d floats) instead of the full d×d rotation matrix.
     Uses mx.hadamard_transform which is O(d log d) and Metal-accelerated.
 
-    Requires d = m * 2^k where m in {1, 12, 20, 28}. All powers of 2 work.
+    Requires d = m * 2^k where m in {1, 12} (m=20/28 are excluded: their
+    Paley Hadamard is non-symmetric so H(H(x))!=x). All powers of 2 work.
 
     Args:
         D: Random ±1 diagonal vector of shape (d,), float32 MLX array.
