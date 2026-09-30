@@ -135,6 +135,12 @@ class GEARKVCache(_MLXKVCache):
         fields automatically via ``dataclasses.replace``.
     """
 
+    # update_and_fetch calls with S at or below this are decode-sized (issue
+    # #590: real decode steps pass S == 1). Only calls this small get the
+    # low-rank-correction profitability check in _compress_and_account —
+    # see that method for why prefill-sized calls must stay unconditional.
+    _DECODE_S_THRESHOLD = 4
+
     def __init__(self, config: Any) -> None:
         super().__init__()
         self._bits = int(getattr(config, "gear_bits", 2))
@@ -242,7 +248,53 @@ class GEARKVCache(_MLXKVCache):
         # _truncated_svd_batched's own docstring for why the padded,
         # batch-max-rank-width L/R must never be used directly for
         # accounting).
-        if self._rank == 0:
+        #
+        # Run the SVD, then — only for decode-sized calls — decide per-row
+        # whether the low-rank correction is worth its fixed storage cost
+        # (issue #590): L is [S, r] and R is [r, D], so R alone costs
+        # rank * D * 2 bytes no matter how small S is. On a real decode step
+        # S == 1 (one new token appended per call), so even a small rank can
+        # cost more than the entire 2-bit payload for that one token --
+        # measured on a real model (D=128): energy-threshold mode picked
+        # rank 4-7 at S=1, where R alone costs 1024-1792 bytes against a
+        # 32-byte payload.
+        #
+        # L is [S, r] and R is [r, D], costing lr_bytes = rank * (S + D) * 2
+        # regardless of how few rows S has. The base-quant payload for the
+        # same block is code_bytes = ceil(S * D * bits / 8). The correction
+        # only pays for itself when lr_bytes < code_bytes; below that, per
+        # row, force its rank to 0 post-hoc (drop L_i/R_i so neither the
+        # returned reconstruction nor the stored-byte accounting includes a
+        # correction that would cost more than it saves).
+        #
+        # This check is gated to S <= _DECODE_S_THRESHOLD (a handful of new
+        # tokens per call) because it's a real tradeoff only there: at
+        # prefill sizes (S in the tens or hundreds), the correction is
+        # exactly the quality-recovery mechanism GEAR exists for (see the
+        # module docstring's `X ~= Quant_b(X) + L.R + S`), and a boundary
+        # case near lr_bytes == code_bytes can flip UNPROFITABLE even on
+        # data specifically constructed to be low-rank (see
+        # test_beats_naive_base_reconstruction, S=128). Restricting the
+        # check to small S keeps that quality contract intact for prefill
+        # while still fixing the decode-step pathology issue #590 reports.
+        # issue #592: lr_bytes = rank * (S + D) * 2 grows monotonically with
+        # rank, so if even rank=1 can't beat code_bytes, no rank the SVD
+        # could pick (fixed or energy-threshold-selected) will be profitable
+        # either -- the whole correction is forced to 0 below regardless of
+        # what the SVD returns. At decode sizes (S <= _DECODE_S_THRESHOLD)
+        # that's a real, common case (see gear_cache module docstring /
+        # #590), and mx.linalg.svd's CPU-stream dispatch + its mandatory
+        # mx.eval sync is ~59% of this method's wall time even on the
+        # near-degenerate [1, D] matrices decode produces (measured via
+        # cProfile: _truncated_svd_batched at 0.339s of 0.576s total across
+        # 300 decode-shaped calls) -- so skip the dispatch entirely rather
+        # than run it and discard the result.
+        skip_svd_unprofitable = False
+        if self._rank != 0 and S <= self._DECODE_S_THRESHOLD:
+            code_bytes_check = -(-(S * D * self._bits) // 8)  # ceil
+            skip_svd_unprofitable = code_bytes_check <= (S + D) * 2
+
+        if self._rank == 0 or skip_svd_unprofitable:
             L_batched = R_batched = None
             ranks = [0] * (B * H)
         else:
@@ -250,6 +302,13 @@ class GEARKVCache(_MLXKVCache):
             L_batched, R_batched, ranks = _truncated_svd_batched(
                 E_batched, rank=self._rank, energy_threshold=self._energy
             )
+            if S <= self._DECODE_S_THRESHOLD:
+                code_bytes = -(-(S * D * self._bits) // 8)  # ceil
+                for i, r in enumerate(ranks):
+                    if r > 0 and r * (S + D) * 2 >= code_bytes:
+                        ranks[i] = 0
+                        L_batched[i, :, :] = 0.0
+                        R_batched[i, :, :] = 0.0
 
         # Pass 3 (VeloxQuant-MLX#570): ONE batched low-rank add + ONE
         # batched sparse-outlier top-k/scatter + ONE batched reconstruction
