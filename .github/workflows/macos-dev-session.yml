@@ -18,6 +18,9 @@ name: macos-dev-session
 # `ssh <string>` from any terminal. Session ends after `timeout-minutes`
 # or when you run `touch continue` then exit the shell.
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
