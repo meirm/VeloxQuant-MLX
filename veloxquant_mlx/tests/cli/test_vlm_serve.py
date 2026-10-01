@@ -10,7 +10,11 @@ def test_installs_veloxquant_hook_once_per_model(monkeypatch):
     model = object()
     tokenizer = SimpleNamespace(apply_chat_template=lambda *args, **kwargs: "native")
     app = SimpleNamespace(
-        get_cached_model=lambda *args, **kwargs: (model, SimpleNamespace(tokenizer=tokenizer), "config")
+        get_cached_model=lambda *args, **kwargs: (
+            model,
+            SimpleNamespace(tokenizer=tokenizer),
+            "config",
+        )
     )
     server_package = SimpleNamespace()
     patched = []

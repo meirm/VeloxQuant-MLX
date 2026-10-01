@@ -16,8 +16,8 @@ from typing import Any
 
 from veloxquant_mlx.cache import KVCacheConfig
 from veloxquant_mlx.cache.registry import DEFAULT_SERVE_METHOD, get_method
-from veloxquant_mlx.integration.mlx_vlm_patch import patch_vlm_kv_cache
 from veloxquant_mlx.integration.chat_templates import ensure_initial_system_prompt_support
+from veloxquant_mlx.integration.mlx_vlm_patch import patch_vlm_kv_cache
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -55,9 +55,7 @@ def _validate_method(method: str) -> None:
         )
 
 
-def _install_vlm_patch(
-    config: KVCacheConfig, server_package: Any, app_module: Any
-) -> None:
+def _install_vlm_patch(config: KVCacheConfig, server_package: Any, app_module: Any) -> None:
     """Patch MLX-VLM's cached-model factory exactly once per model instance.
 
     MLX-VLM routes both startup preload and OpenAI requests through this

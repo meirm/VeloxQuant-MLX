@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 # Mistral-7B-Instruct-v0.3 has no dedicated system token.  This template
 # accepts one initial OpenAI system message, but renders it inside the first
 # instruction block -- the representation the model was trained to consume.

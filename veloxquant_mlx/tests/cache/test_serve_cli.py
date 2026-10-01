@@ -83,7 +83,6 @@ def test_server_leaves_native_system_template_untouched():
     assert tokenizer.chat_template == "native-template"
 
 
-
 def test_validate_method_rejects_crash_tier():
     """No silent fp16 fallback: an unservable method must stop the process."""
     with pytest.raises(SystemExit) as excinfo:
