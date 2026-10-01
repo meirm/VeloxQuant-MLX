@@ -83,6 +83,22 @@ def test_server_leaves_native_system_template_untouched():
     assert tokenizer.chat_template == "native-template"
 
 
+def test_server_applies_template_to_mistral_derived_model_name():
+    tokenizer = _StrictMistralTokenizer()
+    assert ensure_initial_system_prompt_support(tokenizer, "acme/strict-chat-finetune") is True
+
+
+def test_server_does_not_hide_tokenizer_plumbing_errors():
+    class _BrokenTokenizer:
+        chat_template = "stock-template"
+
+        def apply_chat_template(self, messages, **kwargs):
+            raise TypeError("unexpected tokenizer argument")
+
+    with pytest.raises(TypeError, match="unexpected tokenizer argument"):
+        ensure_initial_system_prompt_support(_BrokenTokenizer(), "acme/strict-chat-finetune")
+
+
 def test_validate_method_rejects_crash_tier():
     """No silent fp16 fallback: an unservable method must stop the process."""
     with pytest.raises(SystemExit) as excinfo:

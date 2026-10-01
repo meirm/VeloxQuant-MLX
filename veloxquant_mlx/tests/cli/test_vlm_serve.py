@@ -2,12 +2,17 @@
 
 from types import SimpleNamespace
 
+import pytest
+
 from veloxquant_mlx.cache import KVCacheConfig
 from veloxquant_mlx.cli import vlm_serve
 
 
 def test_installs_veloxquant_hook_once_per_model(monkeypatch):
-    model = object()
+    class Model:
+        pass
+
+    model = Model()
     tokenizer = SimpleNamespace(apply_chat_template=lambda *args, **kwargs: "native")
     app = SimpleNamespace(
         get_cached_model=lambda *args, **kwargs: (
@@ -39,8 +44,16 @@ def test_parser_defaults_to_servable_method():
     assert args.bits == 2
 
 
+def test_validate_method_is_testable_without_process_exit():
+    with pytest.raises(vlm_serve.MethodNotServableError, match="cannot be served"):
+        vlm_serve._validate_method("turboquant_prod")
+
+
 def test_vlm_factory_checks_tokenizer_before_wiring_cache(monkeypatch):
-    model = object()
+    class Model:
+        pass
+
+    model = Model()
     processor = SimpleNamespace(tokenizer=object())
     app = SimpleNamespace(get_cached_model=lambda *args, **kwargs: (model, processor, "config"))
     server_package = SimpleNamespace()
